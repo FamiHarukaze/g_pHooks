@@ -1,3 +1,5 @@
+-- https://www.youtube.com/user/INTELINSIDECHANNEL
+
 local _R = debug.getregistry();
 local _G = _G;
 local cheat_notify = function(x) _G.chat.AddText(_G.Color(240,240,0,255),"g_pHooks| ",_G.Color(240,240,240),x); end;
