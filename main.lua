@@ -1,18 +1,16 @@
--- https://www.youtube.com/user/INTELINSIDECHANNEL
-
 local _R = debug.getregistry();
 local _G = _G;
 local cheat_notify = function(x) _G.chat.AddText(_G.Color(240,240,0,255),"g_pHooks| ",_G.Color(240,240,240),x); end;
-local g_pGetTeam = _R.Player.Team;
-local g_pInVehicle = _R.Player.InVehicle;
-local g_pIsAlive = _R.Player.Alive;
-local g_pLocalToWorld = _R.Entity.LocalToWorld;
-local g_pGetOBBCenter = _R.Entity.OBBCenter;
-local g_GetCenter = function(x) if !x then return; end return g_pLocalToWorld(x,g_pGetOBBCenter(x)); end;
-local g_pEyePos = _R.Entity.EyePos;
-local g_ToAngles = _R.Vector.Angle;
-local g_pIsDormant = function(x) return false; end; --_R.Entity.IsDormant; -- This is going to be in the next Garry's Mod Update
-local g_pGetWeapon = _R.Player.GetActiveWeapon;
+local g_pGT = _R.Player.Team;
+local g_pIV = _R.Player.InVehicle;
+local g_pIA = _R.Player.Alive;
+local g_pLTW = _R.Entity.LocalToWorld;
+local g_pGOBBC = _R.Entity.OBBCenter;
+local g_pGC = function(x) if !x then return; end return g_pLTW(x,g_pGOBBC(x)); end;
+local g_pEP = _R.Entity.EyePos;
+local g_pTANG = _R.Vector.Angle;
+local g_pIDRMNT = function(x) return false; end; --_R.Entity.IsDormant; -- This is going to be in the next Garry's Mod Update
+local g_pWEP = _R.Player.GetActiveWeapon;
 
 --[[ // Todo: Unload Hooks
 local cheat_hooks = {};
@@ -30,16 +28,16 @@ local g_CalcViewAngle = _G.Angle();
 local function g_IsValidTarget(pEnt)
 	if (!pEnt) then return false; end
 	
-	if (g_pIsDormant(pEnt)) then return false; end
+	if (g_pIDRMNT(pEnt)) then return false; end
 	
 	if pEnt:IsPlayer() then
 		if (pEnt == g_pLocalPlayer) then return false; end
 	
-		if (!g_pIsAlive(pEnt)) then return false; end 
+		if (!g_pIA(pEnt)) then return false; end 
 		
-		if (g_pInVehicle(pEnt)) then return false; end
+		if (g_pIV(pEnt)) then return false; end
 
-		if (g_pGetTeam(pEnt) == TEAM_SPECTATOR) then return false; end
+		if (g_pGT(pEnt) == TEAM_SPECTATOR) then return false; end
 	end
 	
 	return true;
@@ -57,13 +55,13 @@ end
 local function g_GetAimPosition(pEnt)
 	local vPrediction = _G.Vector(0,0,0); -- Make your own prediction, faggot.
 
-	return (g_GetCenter(pEnt) + vPrediction);
+	return (g_pGC(pEnt) + vPrediction);
 end
 
 local function g_Aim(CUserCmd)
 	if (g_pAimbotTarget ~= nil) then
 		local vPosition = g_GetAimPosition(g_pAimbotTarget);
-		local aAngles = g_ToAngles(vPosition - g_pEyePos(g_pLocalPlayer))
+		local aAngles = g_ToAngles(vPosition - g_pEP(g_pLocalPlayer))
 		aAngles.p = _G.math.NormalizeAngle(aAngles.p);
 		aAngles.y = _G.math.NormalizeAngle(aAngles.y);
 				
@@ -82,7 +80,7 @@ local function hooked_CreateMove(CUserCmd)
 end
 
 local function hooked_CalcView( ply, origin, angles, fov )
-	local pWeapon = g_pGetWeapon(g_pLocalPlayer);
+	local pWeapon = g_pWEP(g_pLocalPlayer);
 	if ( pWeapon.Primary ) then pWeapon.Primary.Recoil = 0.0; end
 	if ( pWeapon.Secondary ) then pWeapon.Secondary.Recoil = 0.0; end
 	
@@ -102,4 +100,4 @@ end
 hookAdd("CreateMove",hooked_CreateMove);
 hookAdd("CalcView",hooked_CalcView);
 
-cheat_notify("Cheat Loaded");
+cheat_notify("Hungarian Notation Simulator Loaded");
