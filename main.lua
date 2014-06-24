@@ -14,14 +14,20 @@ local g_ToAngles = _R.Vector.Angle;
 local g_pIsDormant = function(x) return false; end; --_R.Entity.IsDormant; -- This is going to be in the next Garry's Mod Update
 local g_pGetWeapon = _R.Player.GetActiveWeapon;
 
---[[ // Todo: Unload Hooks
-local cheat_hooks = {};
-local function cheat_unload()
-	for k = 0, #cheat_hooks do local v = cheat_hooks[k];
-	_G.hook.Remove();
-	end
+local cheat_hooks = {
+	["CreateMove"] = {},
+	["CalcView"] = {}
+};
+
+function cheat_unload()
+	local hooked_vfuncname = "CreateMove"
+		for i = 1, #cheat_hooks[hooked_vfuncname] do local hook_name = cheat_hooks[hooked_vfuncname][i]; _G.hook.Remove(hooked_vfuncname, hook_name); cheat_notify("Hook Removed: "..hooked_vfuncname.." ('"..hook_name.."')"); _G.table.remove(cheat_hooks[hooked_vfuncname],i); end
+	hooked_vfuncname = "CalcView"
+		for i = 1, #cheat_hooks[hooked_vfuncname] do local hook_name = cheat_hooks[hooked_vfuncname][i]; _G.hook.Remove(hooked_vfuncname, hook_name); cheat_notify("Hook Removed: "..hooked_vfuncname.." ('"..hook_name.."')"); _G.table.remove(cheat_hooks[hooked_vfuncname],i); end
+	
+	cheat_notify("Cheat Unloaded")
 end
-]]
+
 
 local g_pLocalPlayer = _G.LocalPlayer();
 local g_pAimbotTarget = nil;
@@ -95,8 +101,10 @@ local function hooked_CalcView( ply, origin, angles, fov )
 end
 
 local function hookAdd(hooked_vfuncname,hooked_nfunc)
-	_G.hook.Add(hooked_vfuncname,_G.tostring(_G.math.random(666,133769420)),hooked_nfunc);
-	cheat_notify("Hook Added: "..hooked_vfuncname);
+	local random_hookname = _G.tostring(_G.math.random(666,133769420));
+	_G.hook.Add(hooked_vfuncname,random_hookname,hooked_nfunc);
+	cheat_notify("Hook Added: "..hooked_vfuncname.." ('"..random_hookname.."')");
+	_G.table.insert(cheat_hooks[hooked_vfuncname],random_hookname)
 end
 
 hookAdd("CreateMove",hooked_CreateMove);
